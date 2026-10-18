@@ -7,7 +7,7 @@
  * Os componentes usam tokens semânticos (bg-fundo, text-texto, bg-cta...). O site tem um único tema, claro.
  */
 @theme {
-  --color-marfim: #fbf9f4;
+  --color-marfim: #ffffff;
   --color-marmore: #f3eee2;
   --color-carvao: #2b2a27;
   --color-ouro: #b8893a;
@@ -20,8 +20,8 @@
 
 :root {
   color-scheme: light;
-  --ec-fundo: #fbf9f4; /* fundo principal (marfim) */
-  --ec-fundo-alt: #f3eee2; /* seções em mármore */
+  --ec-fundo: #ffffff; /* fundo principal branco */
+  --ec-fundo-alt: #f8f6f2; /* detalhes suaves em mármore */
   --ec-superficie: #ffffff; /* cartões e campos */
   --ec-texto: #2b2a27; /* ≈ 13,5:1 no marfim */
   --ec-texto-suave: #504d45; /* ≈ 8,2:1 */
@@ -125,11 +125,11 @@ h3 {
 
 /* ---------- Mármore e meandro grego ---------- */
 
-/* Seção com fundo de mármore (textura em public/marmore-a.jpg), com véu para manter o texto legível. */
+/* Mármore discreto sobre base branca, preservando a textura sem escurecer a página. */
 .fundo-marmore {
-  background-color: var(--ec-fundo-alt);
+  background-color: #ffffff;
   background-image:
-    linear-gradient(rgba(251, 249, 244, 0.55), rgba(251, 249, 244, 0.55)), url("/everton-castro-previa/marmore-a.jpg");
+    linear-gradient(rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.84)), url("/everton-castro-previa/marmore-a.jpg");
   background-size: cover;
   background-position: center;
 }
