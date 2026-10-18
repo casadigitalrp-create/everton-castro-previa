@@ -1,0 +1,53 @@
+---
+import { Picture } from "astro:assets";
+import { fundos } from "../data/fundos";
+import { site, whatsappLink } from "../data/site";
+---
+
+<!-- Cartão de mármore com moldura dourada: separa a chamada final do rodapé. -->
+<section id="contato" class="scroll-mt-20 bg-fundo px-4 py-16 text-texto sm:px-6 sm:py-24">
+  <div data-revelar class="borda-luz relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] shadow-2xl shadow-ouro/20 [--fundo-interno:var(--color-marfim)]">
+    <div class="fundo-marmore absolute inset-[2px] rounded-[calc(2rem-2px)]" aria-hidden="true"></div>
+    <div class="relative grid items-stretch lg:grid-cols-[1.05fr_1fr]">
+      <div class="p-8 sm:p-12 lg:p-14">
+        <p class="text-sm font-bold tracking-[0.2em] text-destaque uppercase">Agende sua visita</p>
+        <h2 class="mt-3 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">
+          Vamos cuidar do seu sorriso, no seu ritmo?
+        </h2>
+        <p class="mt-5 max-w-lg text-lg leading-relaxed text-texto-suave">
+          Escreva pelo WhatsApp ou por e-mail. Se quiser chegar mais tranquilo, veja antes a ferramenta “Prepare sua
+          consulta”.
+        </p>
+        <div class="mt-9 flex flex-col gap-4 sm:flex-row">
+          <a
+            href={whatsappLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-magnetico
+            class="borda-luz rounded-full bg-cta px-7 py-3.5 text-center text-lg font-bold text-cta-texto shadow-[0_10px_30px_-10px] shadow-ouro/70 transition-all hover:-translate-y-0.5"
+          >
+            Agendar pelo WhatsApp<span class="sr-only"> (abre em nova aba)</span>
+          </a>
+          <a
+            href={`mailto:${site.email}`}
+            class="rounded-full border border-borda-forte bg-superficie/70 px-7 py-3.5 text-center text-lg font-bold text-texto transition-colors hover:border-destaque hover:text-destaque"
+          >
+            Enviar e-mail
+          </a>
+        </div>
+      </div>
+      <div class="relative min-h-60 lg:min-h-[24rem]">
+        <Picture
+          src={fundos.sorriso}
+          alt="Ilustração conceitual de uma coroa de louro dourada em volta de uma fileira de dentes de mármore e um arco que lembra um sorriso."
+          formats={["avif", "webp"]}
+          widths={[640, 960, 1280]}
+          sizes="(min-width: 1024px) 45vw, 100vw"
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover object-center [mask-image:linear-gradient(to_bottom,transparent,black_35%)] lg:[mask-image:linear-gradient(to_right,transparent,black_30%)]"
+        />
+      </div>
+    </div>
+  </div>
+</section>

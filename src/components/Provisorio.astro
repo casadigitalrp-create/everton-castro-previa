@@ -1,0 +1,12 @@
+---
+// Marca visível de conteúdo ainda não confirmado pelo profissional. Antes de publicar, todo uso precisa ter sido
+// removido. Procure por "<Provisorio" no projeto para encontrar todos.
+interface Props {
+  rotulo?: string;
+}
+const { rotulo = "Provisório" } = Astro.props;
+---
+
+{" "}<span class="ml-1 inline-block rounded-full border border-dashed border-aviso-borda bg-aviso-fundo px-2 py-0.5 align-middle text-xs font-bold tracking-wide text-aviso-texto uppercase">
+  {rotulo}
+</span>

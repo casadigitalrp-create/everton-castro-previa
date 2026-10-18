@@ -1,0 +1,106 @@
+---
+import { Font } from "astro:assets";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import WhatsAppFixo from "../components/WhatsAppFixo.astro";
+import { site } from "../data/site";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Só para páginas que não devem aparecer em buscas, como a 404. */
+  noindex?: boolean;
+}
+
+const {
+  title = `${site.nome} | ${site.titulo}`,
+  description = site.descricao,
+  noindex = true,
+} = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(`${base}og.jpg`, Astro.site);
+
+// Dados estruturados mínimos. Sem telefone, endereço ou avaliações: nada que não esteja confirmado.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Dentist",
+  name: `${site.nome} ${site.titulo}`,
+  url: Astro.site?.toString(),
+  image: ogImage.toString(),
+  description,
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Font cssVariable="--font-cormorant" preload />
+    <Font cssVariable="--font-inter" preload />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <meta name="theme-color" content="#FBF9F4" />
+    <!-- Marca o <html> para os efeitos de entrada: sem JavaScript, tudo continua visível. -->
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={`${site.nome} | ${site.titulo}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Colunas gregas em mármore claro com detalhes dourados." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <div class="bg-[#5b3300] px-4 py-2 text-center text-sm font-semibold text-white">
+      Prévia demonstrativa para avaliação de Everton Castro. Informações e canais de contato sujeitos à confirmação.
+    </div>
+    <div class="progresso-leitura" aria-hidden="true"></div>
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-cta focus:px-4 focus:py-2 focus:font-bold focus:text-cta-texto"
+    >
+      Pular para o conteúdo
+    </a>
+    <Header />
+    <main id="conteudo" tabindex="-1" class="flex-1 focus:outline-none">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFixo />
+    <script>
+      import "../scripts/efeitos";
+
+      // Entrada suave das seções marcadas com data-revelar (os estilos ficam em global.css).
+      const itens = document.querySelectorAll<HTMLElement>("[data-revelar]");
+      if ("IntersectionObserver" in window) {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              entrada.target.classList.add("revelado");
+              observador.unobserve(entrada.target);
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
+        );
+        itens.forEach((item) => observador.observe(item));
+      } else {
+        itens.forEach((item) => item.classList.add("revelado"));
+      }
+    </script>
+  </body>
+</html>

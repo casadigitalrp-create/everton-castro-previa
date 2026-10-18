@@ -1,0 +1,41 @@
+---
+import Base from "../layouts/Base.astro";
+
+const caminhos = [
+  { href: "/", titulo: "Início", texto: "Voltar ao começo" },
+  { href: `${import.meta.env.BASE_URL.replace(/\/$/, "")}/#cuidado`, titulo: "Cuidado com você", texto: "Receios comuns e como respondo a eles" },
+  { href: `${import.meta.env.BASE_URL.replace(/\/$/, "")}/#preparar`, titulo: "Prepare sua consulta", texto: "O que levar e o que perguntar" },
+  { href: `${import.meta.env.BASE_URL.replace(/\/$/, "")}/#contato`, titulo: "Contato", texto: "Agendar pelo WhatsApp ou e-mail" },
+];
+---
+
+<Base title="Página não encontrada" noindex>
+  <section class="fundo-marmore relative overflow-hidden">
+    <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+      <p class="font-display text-[7rem] leading-none font-semibold tracking-tighter text-destaque sm:text-[10rem]" aria-hidden="true">
+        404
+      </p>
+      <div class="meandro mt-4 max-w-xs" aria-hidden="true"></div>
+      <p class="mt-8 text-sm font-bold tracking-[0.2em] text-destaque uppercase">Erro 404</p>
+      <h1 class="mt-3 font-display text-4xl leading-tight font-semibold sm:text-6xl">Página não encontrada</h1>
+      <p class="mt-4 max-w-xl text-lg leading-relaxed text-texto-suave">
+        O endereço pode ter mudado ou não existe mais. Escolha um caminho para continuar:
+      </p>
+      <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          caminhos.map((c) => (
+            <li>
+              <a href={c.href} class="group flex h-full flex-col rounded-2xl border border-borda bg-superficie/80 p-5 transition hover:-translate-y-0.5 hover:border-ouro">
+                <span class="flex items-center justify-between font-display text-xl font-semibold">
+                  {c.titulo}
+                  <span aria-hidden="true" class="text-ouro transition-transform group-hover:translate-x-1">→</span>
+                </span>
+                <span class="mt-1 text-[15px] text-texto-suave">{c.texto}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

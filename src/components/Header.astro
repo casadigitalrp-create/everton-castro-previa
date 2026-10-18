@@ -1,0 +1,103 @@
+---
+import { menu, site, whatsappLink } from "../data/site";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+
+<header class="vt-cabecalho sticky top-0 z-40 border-b border-ouro/50 bg-marfim/90 text-texto backdrop-blur">
+  <div class="mx-auto flex h-20 max-w-6xl items-center justify-between gap-3 px-4 sm:gap-6 sm:px-6">
+    <a href={base} class="flex shrink-0 items-center gap-3 rounded-md">
+      <svg width="42" height="42" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="1.500" y="1.500" width="61" height="61" rx="12.500" fill="#fff" stroke="#b8893a" stroke-width="3" />
+        <path d="M32 15c-4-4-12-3-14 3-1.500 4 .5 8 1.500 12 1 4 1.500 10 4 14 1.800 2.800 4 .5 4-3 0-2.500.5-5 4.500-5s4.500 2.500 4.500 5c0 3.500 2.200 5.800 4 3 2.500-4 3-10 4-14 1-4 3-8 1.500-12-2-6-10-7-14-3Z" fill="#fbf9f4" stroke="#b8893a" stroke-width="2.200" stroke-linejoin="round" />
+      </svg>
+      <span class="leading-tight">
+        <span class="block font-display text-2xl font-semibold tracking-tight">{site.nome}</span>
+        <span class="block text-[11px] font-bold tracking-[0.2em] text-destaque uppercase">{site.titulo}</span>
+        <span class="sr-only">: página inicial</span>
+      </span>
+    </a>
+
+    <nav aria-label="Principal" class="hidden xl:block">
+      <ul class="flex items-center gap-6 text-[15px] font-semibold">
+        {
+          menu.map((item) => (
+            <li>
+              <a href={`${base}${item.href}`} class="py-2 whitespace-nowrap text-texto-suave transition-colors hover:text-destaque">
+                {item.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a
+      href={whatsappLink()}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hidden rounded-full bg-cta px-5 py-2.5 text-[15px] font-bold whitespace-nowrap text-cta-texto transition-colors hover:bg-cta-hover xl:inline-block"
+    >
+      Agendar pelo WhatsApp<span class="sr-only"> (abre em nova aba)</span>
+    </a>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="ml-auto shrink-0 rounded-lg p-2 text-texto xl:hidden"
+      aria-expanded="false"
+      aria-controls="menu-mobile"
+      aria-label="Abrir menu"
+    >
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path class="menu-aberto" d="M4 7h16M4 12h16M4 17h16"></path>
+        <path class="menu-fechado hidden" d="M6 6l12 12M18 6L6 18"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav id="menu-mobile" aria-label="Principal (celular)" class="hidden border-t border-borda bg-marfim xl:hidden">
+    <ul class="mx-auto flex max-w-6xl flex-col px-4 py-4 text-lg font-semibold sm:px-6">
+      {
+        menu.map((item) => (
+          <li>
+            <a href={`${base}${item.href}`} class="block py-3 text-texto" data-fecha-menu>
+              {item.rotulo}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-3">
+        <a
+          href={whatsappLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block rounded-full bg-cta px-5 py-3 text-center font-bold text-cta-texto"
+        >
+          Agendar pelo WhatsApp<span class="sr-only"> (abre em nova aba)</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div class="meandro" aria-hidden="true"></div>
+</header>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const menu = document.getElementById("menu-mobile");
+  const setOpen = (open: boolean) => {
+    toggle?.setAttribute("aria-expanded", String(open));
+    toggle?.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    toggle?.querySelector(".menu-aberto")?.classList.toggle("hidden", open);
+    toggle?.querySelector(".menu-fechado")?.classList.toggle("hidden", !open);
+    menu?.classList.toggle("hidden", !open);
+  };
+  toggle?.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+  // Escolher um item do menu no celular fecha o menu.
+  document.querySelectorAll("[data-fecha-menu]").forEach((link) => link.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+</script>

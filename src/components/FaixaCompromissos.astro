@@ -1,0 +1,25 @@
+---
+// Faixa logo abaixo da Hero com os compromissos do atendimento. Desliza devagar; pausa ao passar o mouse
+// ou focar, e fica parada (em linhas centralizadas) com movimento reduzido. A segunda cópia é só para o efeito.
+import { compromissos } from "../data/site";
+---
+
+<section aria-label="Compromissos do atendimento" class="faixa fundo-marmore overflow-hidden border-y border-ouro/40 py-3.5 text-texto">
+  <div class="faixa-trilha flex w-max items-center whitespace-nowrap">
+    {
+      [0, 1].map((copia) => (
+        <ul
+          class="flex shrink-0 items-center text-sm font-bold tracking-[0.14em] text-texto-suave uppercase"
+          aria-hidden={copia === 1 ? "true" : undefined}
+        >
+          {compromissos.map((item) => (
+            <li class="flex items-center">
+              <span class="px-5">{item}</span>
+              <span class="text-ouro" aria-hidden="true">✦</span>
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</section>

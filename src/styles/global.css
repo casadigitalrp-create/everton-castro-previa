@@ -1,0 +1,162 @@
+@import "tailwindcss";
+@import "./efeitos.css";
+
+/*
+ * Identidade do site: mármore claro, dourado e azul-egeu, com detalhes inspirados na Grécia clássica
+ * (colunas, louro, meandro). Fontes: Cormorant Garamond (títulos) e Inter (texto).
+ * Os componentes usam tokens semânticos (bg-fundo, text-texto, bg-cta...). O site tem um único tema, claro.
+ */
+@theme {
+  --color-marfim: #fbf9f4;
+  --color-marmore: #f3eee2;
+  --color-carvao: #2b2a27;
+  --color-ouro: #b8893a;
+  --color-ouro-claro: #e3c98c;
+  --color-egeu: #1f5b7a;
+
+  --font-sans: var(--font-inter, ui-sans-serif, system-ui, sans-serif);
+  --font-display: var(--font-cormorant, Georgia, "Times New Roman", serif);
+}
+
+:root {
+  color-scheme: light;
+  --ec-fundo: #fbf9f4; /* fundo principal (marfim) */
+  --ec-fundo-alt: #f3eee2; /* seções em mármore */
+  --ec-superficie: #ffffff; /* cartões e campos */
+  --ec-texto: #2b2a27; /* ≈ 13,5:1 no marfim */
+  --ec-texto-suave: #504d45; /* ≈ 8,2:1 */
+  --ec-texto-sutil: #67635a; /* ≈ 5,5:1 */
+  --ec-borda: #e6dcc6;
+  --ec-borda-forte: #8c8574; /* contorno de campos (≥ 3:1) */
+  --ec-destaque: #7a5a1e; /* dourado escurecido para texto, ≈ 6:1 no marfim */
+  --ec-cta: #b8893a;
+  --ec-cta-texto: #1f1c15; /* ≈ 6:1 sobre o dourado */
+  --ec-cta-hover: #cf9f4b;
+  --ec-foco: #1f5b7a;
+  /* Dor (tom terracota) e solução (tom azul-egeu): o par "o que você sente / como eu cuido disso". */
+  --ec-dor-fundo: #f8e6dd;
+  --ec-dor-texto: #8a3b1f;
+  --ec-solucao-fundo: #e1edf3;
+  --ec-solucao-texto: #1f5b7a;
+  --ec-aviso-fundo: #fff7e0;
+  --ec-aviso-borda: #b9892b;
+  --ec-aviso-texto: #6b4a0d;
+}
+
+@theme inline {
+  --color-fundo: var(--ec-fundo);
+  --color-fundo-alt: var(--ec-fundo-alt);
+  --color-superficie: var(--ec-superficie);
+  --color-texto: var(--ec-texto);
+  --color-texto-suave: var(--ec-texto-suave);
+  --color-texto-sutil: var(--ec-texto-sutil);
+  --color-borda: var(--ec-borda);
+  --color-borda-forte: var(--ec-borda-forte);
+  --color-destaque: var(--ec-destaque);
+  --color-cta: var(--ec-cta);
+  --color-cta-texto: var(--ec-cta-texto);
+  --color-cta-hover: var(--ec-cta-hover);
+  --color-foco: var(--ec-foco);
+  --color-dor-fundo: var(--ec-dor-fundo);
+  --color-dor-texto: var(--ec-dor-texto);
+  --color-solucao-fundo: var(--ec-solucao-fundo);
+  --color-solucao-texto: var(--ec-solucao-texto);
+  --color-aviso-fundo: var(--ec-aviso-fundo);
+  --color-aviso-borda: var(--ec-aviso-borda);
+  --color-aviso-texto: var(--ec-aviso-texto);
+}
+
+html {
+  scroll-padding-top: 6rem;
+}
+
+body {
+  @apply bg-fundo text-texto font-sans antialiased;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.005em;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    outline-color: var(--ec-foco);
+  }
+  :focus-visible {
+    outline: 3px solid var(--ec-foco);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: precisa vencer qualquer animação para respeitar a preferência de movimento reduzido */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: idem */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: idem */
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Entrada suave das seções ao rolar. O script de layouts/Base.astro marca o <html> com `js` e adiciona
+   `revelado` quando a seção aparece. Sem JavaScript, ou com movimento reduzido, tudo fica visível. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-revelar] {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+  html.js [data-revelar].revelado {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Mármore e meandro grego ---------- */
+
+/* Seção com fundo de mármore (textura em public/marmore-a.jpg), com véu para manter o texto legível. */
+.fundo-marmore {
+  background-color: var(--ec-fundo-alt);
+  background-image:
+    linear-gradient(rgba(251, 249, 244, 0.55), rgba(251, 249, 244, 0.55)), url("/everton-castro-previa/marmore-a.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Faixa de meandro (greca) dourada, em repetição horizontal. */
+.meandro {
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='18' viewBox='0 0 36 18'%3E%3Cpath d='M0 15H36M30 15V3H6V11H22V7H14' fill='none' stroke='%23b8893a' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: center;
+  opacity: 0.85;
+}
+
+/* Divisor fino com losango central, usado entre blocos de texto. */
+.divisor-ouro {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-ouro);
+}
+.divisor-ouro::before,
+.divisor-ouro::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--color-ouro));
+}
+.divisor-ouro::after {
+  background: linear-gradient(90deg, var(--color-ouro), transparent);
+}

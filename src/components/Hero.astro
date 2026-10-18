@@ -1,0 +1,195 @@
+---
+import { Picture } from "astro:assets";
+import { fundosHero } from "../data/fundos";
+import { whatsappLink } from "../data/site";
+---
+
+<section class="relative isolate flex min-h-[34rem] items-center overflow-hidden bg-marfim text-texto lg:min-h-[42rem]" data-hero>
+  <!-- Uma única camada recebe o parallax (em vez de cada imagem). -->
+  <div class="hero-camada absolute inset-0 -z-10" aria-hidden="true">
+    {
+      fundosHero.map((fundo, i) => (
+        <Picture
+          src={fundo.imagem}
+          alt=""
+          formats={["avif", "webp"]}
+          widths={[768, 1280, 1920]}
+          sizes="100vw"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "low"}
+          decoding={i === 0 ? "sync" : "async"}
+          class="hero-fundo absolute inset-0 h-full w-full object-cover object-[78%_50%] lg:object-right"
+          data-fundo={i}
+          data-titulo={fundo.titulo}
+          data-ativo={i === 0 ? "true" : undefined}
+        />
+      ))
+    }
+  </div>
+  <!-- Brilhos lentos de fundo (aurora dourada). Param com movimento reduzido. -->
+  <div class="hero-aurora -z-10" aria-hidden="true">
+    <span class="-top-32 right-[4%] h-[28rem] w-[28rem] opacity-50"></span>
+    <span class="bottom-[-8rem] left-[18%] h-[26rem] w-[26rem] opacity-40" style="animation-delay: -8s"></span>
+  </div>
+  <!-- Mantém o texto legível: véu uniforme no celular e degradê a partir da esquerda no desktop. -->
+  <div class="absolute inset-0 -z-10 bg-marfim/70 lg:hidden" aria-hidden="true"></div>
+  <div class="absolute inset-0 -z-10 hidden bg-gradient-to-r from-marfim via-marfim/80 to-transparent lg:block" aria-hidden="true"></div>
+
+  <div class="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-32">
+    <div class="max-w-2xl">
+      <p class="text-sm font-bold tracking-[0.2em] text-destaque uppercase">Cirurgião-dentista · Formado pela UNAERP</p>
+      <h1 class="mt-5 font-display text-5xl leading-[1.02] font-semibold text-balance sm:text-7xl">
+        Um sorriso cuidado com <em class="text-destaque italic">calma</em> e clareza.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-texto-suave sm:text-xl">
+        Eu escuto antes de examinar, explico cada passo em palavras simples e combino o plano e o orçamento antes de
+        começar.
+      </p>
+
+      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+        <a
+          href={whatsappLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-magnetico
+          class="borda-luz rounded-full bg-cta px-7 py-3.5 text-center text-lg font-bold text-cta-texto shadow-[0_10px_30px_-10px] shadow-ouro/70 transition-all hover:-translate-y-0.5"
+        >
+          Agendar pelo WhatsApp<span class="sr-only"> (abre em nova aba)</span>
+        </a>
+        <a
+          href="#consulta"
+          class="rounded-full border border-borda-forte bg-superficie/70 px-7 py-3.5 text-center text-lg font-bold text-texto backdrop-blur-sm transition-colors hover:border-destaque hover:text-destaque"
+        >
+          Como é a consulta
+        </a>
+      </div>
+      <a href="#cuidado" class="mt-7 inline-flex min-h-11 items-center gap-2 font-bold text-destaque underline decoration-ouro/50 underline-offset-4 hover:text-texto">Com medo ou receio do dentista? Comece por aqui <span class="seta-y" aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+
+  <!-- Controle da troca de fundos: fica à esquerda, alinhado ao texto, para não ficar embaixo do botão do WhatsApp. -->
+  <div class="absolute inset-x-0 bottom-4 z-10 sm:bottom-6">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div
+        class="inline-flex items-center gap-1 rounded-full border border-borda bg-superficie/85 py-1 pr-4 pl-1 shadow-sm backdrop-blur"
+        role="group"
+        aria-label="Imagens de fundo da página inicial"
+      >
+        <button
+          type="button"
+          data-hero-pausa
+          class="grid h-9 w-9 place-items-center rounded-full text-texto transition-colors hover:bg-texto/5"
+          aria-label="Pausar a troca automática das imagens"
+        >
+          <svg data-icone-pausar width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
+          <svg data-icone-retomar class="hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" /></svg>
+        </button>
+        <ol class="flex items-center">
+          {
+            fundosHero.map((fundo, i) => (
+              <li>
+                <button
+                  type="button"
+                  data-hero-ponto={i}
+                  class="hero-ponto grid h-8 w-6 place-items-center"
+                  aria-label={`Mostrar imagem ${i + 1} de ${fundosHero.length}: ${fundo.titulo}`}
+                  aria-current={i === 0 ? "true" : undefined}
+                >
+                  <span class="block h-2 w-2 rounded-full bg-texto/30 transition-all"></span>
+                </button>
+              </li>
+            ))
+          }
+        </ol>
+        <p data-hero-legenda class="ml-2 hidden text-sm font-semibold text-texto-suave md:block" aria-hidden="true">{fundosHero[0]?.titulo}</p>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .hero-fundo { opacity: 0; transition: opacity 900ms ease; }
+  .hero-fundo[data-ativo="true"] { opacity: 1; }
+  .hero-ponto[aria-current="true"] span { width: 1.25rem; background: var(--color-ouro); }
+  @media (prefers-reduced-motion: reduce) { .hero-fundo { transition: none; } }
+</style>
+<script>
+  const INTERVALO = 7000;
+  const raiz = document.querySelector<HTMLElement>("[data-hero]");
+  if (raiz) {
+    const fundos = [...raiz.querySelectorAll<HTMLElement>("[data-fundo]")];
+    const pontos = [...raiz.querySelectorAll<HTMLButtonElement>("[data-hero-ponto]")];
+    const legenda = raiz.querySelector<HTMLElement>("[data-hero-legenda]");
+    const botaoPausa = raiz.querySelector<HTMLButtonElement>("[data-hero-pausa]");
+    const reduzMovimento = matchMedia("(prefers-reduced-motion: reduce)");
+    let atual = 0;
+    let temporizador = 0;
+    let pausadoPeloVisitante = reduzMovimento.matches;
+    let visivel = true;
+    let sobControles = false;
+
+    function mostrar(indice: number) {
+      atual = (indice + fundos.length) % fundos.length;
+      fundos.forEach((fundo, i) => {
+        if (i === atual) fundo.dataset.ativo = "true";
+        else delete fundo.dataset.ativo;
+      });
+      pontos.forEach((ponto, i) => {
+        if (i === atual) ponto.setAttribute("aria-current", "true");
+        else ponto.removeAttribute("aria-current");
+      });
+      if (legenda) legenda.textContent = fundos[atual]?.dataset.titulo ?? "";
+    }
+
+    // A troca só corre quando o visitante não pausou, a Hero está na tela, a aba está ativa
+    // e o mouse ou o foco não estão sobre o controle.
+    function atualizarTemporizador() {
+      window.clearInterval(temporizador);
+      temporizador = 0;
+      if (pausadoPeloVisitante || !visivel || document.hidden || sobControles || reduzMovimento.matches) return;
+      temporizador = window.setInterval(() => mostrar(atual + 1), INTERVALO);
+    }
+
+    function marcarPausa(pausado: boolean) {
+      pausadoPeloVisitante = pausado;
+      botaoPausa?.setAttribute(
+        "aria-label",
+        pausado ? "Retomar a troca automática das imagens" : "Pausar a troca automática das imagens",
+      );
+      botaoPausa?.querySelector("[data-icone-pausar]")?.classList.toggle("hidden", pausado);
+      botaoPausa?.querySelector("[data-icone-retomar]")?.classList.toggle("hidden", !pausado);
+      atualizarTemporizador();
+    }
+
+    botaoPausa?.addEventListener("click", () => marcarPausa(!pausadoPeloVisitante));
+    pontos.forEach((ponto, i) =>
+      ponto.addEventListener("click", () => {
+        mostrar(i);
+        atualizarTemporizador();
+      }),
+    );
+    const controles = botaoPausa?.parentElement;
+    const sobre = (valor: boolean) => () => {
+      sobControles = valor;
+      atualizarTemporizador();
+    };
+    controles?.addEventListener("pointerenter", sobre(true));
+    controles?.addEventListener("pointerleave", sobre(false));
+    controles?.addEventListener("focusin", sobre(true));
+    controles?.addEventListener("focusout", sobre(false));
+    new IntersectionObserver(
+      ([entrada]) => {
+        visivel = entrada?.isIntersecting ?? true;
+        atualizarTemporizador();
+      },
+      { threshold: 0.25 },
+    ).observe(raiz);
+    document.addEventListener("visibilitychange", atualizarTemporizador);
+    // Com movimento reduzido não há troca automática, então o botão de pausa não faz sentido.
+    const ajustarMovimentoReduzido = () => {
+      if (botaoPausa) botaoPausa.style.display = reduzMovimento.matches ? "none" : "";
+      marcarPausa(reduzMovimento.matches);
+    };
+    reduzMovimento.addEventListener("change", ajustarMovimentoReduzido);
+    ajustarMovimentoReduzido();
+  }
+</script>

@@ -1,0 +1,53 @@
+---
+import { dores } from "../data/dores";
+---
+
+<section id="cuidado" aria-labelledby="cuidado-titulo" class="scroll-mt-20 bg-fundo text-texto">
+  <div data-revelar class="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
+    <div class="max-w-3xl">
+      <p class="text-sm font-bold tracking-[0.18em] text-destaque uppercase">Cuidado com você</p>
+      <h2 id="cuidado-titulo" class="mt-3 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">
+        Ir ao dentista pode dar medo. Você se reconhece aqui?
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-texto-suave">
+        São receios comuns de quem precisa de um dentista. Ao lado de cada um, veja como o atendimento foi pensado
+        para responder a ele.
+      </p>
+    </div>
+
+    <ul data-escalonar class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        dores.map((dor) => (
+          <li data-spotlight data-eleva class="flex flex-col overflow-hidden rounded-3xl border border-borda bg-superficie shadow-sm">
+            <div class="bg-dor-fundo p-6 text-dor-texto">
+              <p class="text-xs font-bold tracking-[0.18em] uppercase">O que você sente</p>
+              <p class="mt-2 font-display text-2xl leading-snug font-semibold">“{dor.frase}”</p>
+            </div>
+            <div class="flex flex-1 flex-col p-6">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-solucao-fundo text-solucao-texto">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d={dor.icone} />
+                  </svg>
+                </span>
+                <p class="text-xs font-bold tracking-[0.18em] text-solucao-texto uppercase">Como eu cuido disso</p>
+              </div>
+              <h3 class="mt-3 font-display text-2xl font-semibold">{dor.solucaoTitulo}</h3>
+              <p class="mt-2 leading-relaxed text-texto-suave">{dor.solucao}</p>
+              {
+                dor.link && (
+                  <a
+                    href={dor.link.href}
+                    class="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-4 font-bold text-destaque underline decoration-destaque/40 underline-offset-4 hover:text-texto"
+                  >
+                    {dor.link.rotulo} <span class="seta-x" aria-hidden="true">→</span>
+                  </a>
+                )
+              }
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

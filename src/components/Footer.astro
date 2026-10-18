@@ -1,0 +1,57 @@
+---
+import { menu, site, whatsappLink } from "../data/site";
+import Provisorio from "./Provisorio.astro";
+
+const ano = new Date().getFullYear();
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+
+<footer class="fundo-marmore relative overflow-hidden text-texto-suave">
+  <div class="meandro" aria-hidden="true"></div>
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <p class="font-display text-3xl font-semibold text-texto">{site.nome}</p>
+      <p class="mt-1 text-[11px] font-bold tracking-[0.2em] text-destaque uppercase">{site.titulo}</p>
+      <p class="mt-4 text-[15px] text-texto">{site.cro}<Provisorio rotulo="CRO a confirmar" /></p>
+      <p class="mt-1 text-[15px]">Formado pela {site.formacao}<Provisorio rotulo="Confirmar" /></p>
+      <p class="mt-4 max-w-sm text-[15px] leading-relaxed">
+        Acolhimento, explicação em palavras simples e plano combinado antes de começar.
+      </p>
+    </div>
+
+    <nav aria-label="Rodapé">
+      <p class="text-sm font-bold tracking-wide text-texto uppercase">Navegação</p>
+      <ul class="mt-4 space-y-2.5 text-[15px]">
+        {menu.map((item) => <li><a href={`${base}${item.href}`} class="hover:text-destaque">{item.rotulo}</a></li>)}
+        <li><a href={`${base}politica-de-privacidade/`} class="hover:text-destaque">Política de Privacidade</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="text-sm font-bold tracking-wide text-texto uppercase">Contato</p>
+      <ul class="mt-4 space-y-2.5 text-[15px]">
+        <li>
+          <a href={whatsappLink()} class="hover:text-destaque" rel="noopener noreferrer" target="_blank">
+            WhatsApp {site.whatsappExibicao}<span class="sr-only"> (abre em nova aba)</span>
+          </a>
+          <Provisorio />
+        </li>
+        <li><a href={`mailto:${site.email}`} class="break-all hover:text-destaque">{site.email}</a><Provisorio /></li>
+        <li>{site.atendimento}</li>
+        <li>{site.cidade}<Provisorio rotulo="Cidade a confirmar" /></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-borda bg-marfim/70">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-sm leading-relaxed sm:px-6">
+      <p>
+        <strong class="text-texto">Aviso:</strong> este site tem caráter exclusivamente informativo e educativo. Ele não
+        faz diagnóstico, não promete resultados e não substitui o exame e a avaliação individual feitos por um
+        cirurgião-dentista. A comunicação foi pensada de acordo com o Código de Ética Odontológica e com as normas do
+        Conselho Federal de Odontologia.
+      </p>
+      <p class="mt-3">© {ano} {site.nome} | {site.titulo}. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>

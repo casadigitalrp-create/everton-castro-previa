@@ -1,0 +1,287 @@
+/*
+ * Efeitos visuais da V2 (pacotes A e B).
+ * Regras do conjunto:
+ *  - efeitos de mouse só valem com mouse (hover: hover e pointer: fine); no toque o visual fica estático;
+ *  - o que se mexe sozinho (rotação de luz, aurora, faixa de compromissos) para com movimento reduzido;
+ *  - nenhum efeito muda o layout, para a página continuar estável;
+ *  - recursos novos (animação ligada à rolagem, transição entre páginas) ficam atrás de @supports ou são
+ *    ignorados pelo navegador que não os conhece: o site continua igual ao da V1.
+ * O comportamento por script está em src/scripts/efeitos.ts.
+ */
+
+/* ---------- A1. Brilho que segue o cursor nos cartões ---------- */
+[data-spotlight] {
+  position: relative;
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-spotlight]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      360px circle at var(--x, 50%) var(--y, 50%),
+      color-mix(in srgb, var(--spot, var(--ec-destaque)) 22%, transparent),
+      transparent 65%
+    );
+  }
+  [data-spotlight]:hover::after {
+    opacity: 1;
+  }
+  [data-spotlight][data-eleva] {
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+  [data-spotlight][data-eleva]:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--spot, var(--ec-destaque)) 45%, var(--ec-borda));
+    box-shadow: 0 18px 40px -22px
+      color-mix(in srgb, var(--spot, var(--ec-destaque)) 55%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-spotlight]::after,
+  [data-spotlight][data-eleva] {
+    transition: none;
+  }
+}
+
+/* ---------- A2. Borda com luz em movimento (botões principais e cartão final) ----------
+   Uma camada com gradiente cônico gira atrás de uma camada interna 2px menor. Só usa transform,
+   que o navegador anima fora da thread principal (animar uma variável CSS, como --angulo, pesava no
+   Lighthouse: o tempo de bloqueio dobrou). */
+.borda-luz {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.borda-luz::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  z-index: -2;
+  background: conic-gradient(transparent 0 58%, var(--color-ouro) 82%, #fff 94%, transparent 100%);
+  animation: borda-gira 5s linear infinite;
+  will-change: transform;
+}
+.borda-luz::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--fundo-interno, var(--color-ouro));
+}
+/* Botões usam sempre o dourado da marca, mesmo dentro de um cartão que define outra cor interna. */
+a.borda-luz,
+button.borda-luz {
+  --fundo-interno: var(--color-ouro);
+}
+a.borda-luz:hover,
+button.borda-luz:hover,
+a.borda-luz:focus-visible {
+  --fundo-interno: #fff;
+}
+@keyframes borda-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .borda-luz::before {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* ---------- A3. Setas que deslizam ---------- */
+.seta-x,
+.seta-y {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+a:hover > .seta-x,
+button:hover > .seta-x,
+a:focus-visible > .seta-x {
+  transform: translateX(0.3rem);
+}
+a:hover > .seta-y,
+a:focus-visible > .seta-y {
+  transform: translateY(0.2rem);
+}
+
+/* ---------- A5. Barra de progresso de leitura (só onde o navegador liga animação à rolagem) ---------- */
+.progresso-leitura {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progresso-leitura {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 60;
+      height: 3px;
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      background: linear-gradient(90deg, var(--color-ouro), var(--color-ouro-claro) 70%, #fff);
+      /* Propriedades separadas de propósito: o minificador as juntaria no atalho `animation`, que o Chrome ignora com timeline. */
+      animation-name: progresso-cresce;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+    }
+    @keyframes progresso-cresce {
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+}
+
+/* ---------- A6. Transição suave entre páginas (Chrome, Edge e Safari; no Firefox a navegação é normal) ---------- */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+}
+/* Cabeçalho e botão do WhatsApp ficam parados enquanto o conteúdo troca. */
+.vt-cabecalho {
+  view-transition-name: cabecalho;
+}
+.vt-whatsapp {
+  view-transition-name: whatsapp;
+}
+
+/* ---------- A7. Hero com profundidade: aurora lenta e imagem que acompanha a rolagem mais devagar ---------- */
+.hero-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero-aurora span {
+  position: absolute;
+  border-radius: 9999px;
+  /* Degradê radial em vez de filter: blur + mix-blend-mode, que pesavam na pintura inicial. */
+  background: radial-gradient(
+    circle closest-side,
+    var(--cor-aurora, var(--color-ouro)),
+    transparent
+  );
+  opacity: 0.38;
+  will-change: transform;
+  animation: aurora 24s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+  from {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8%, 6%, 0) scale(1.18);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-aurora span {
+    animation: none;
+  }
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-hero] .hero-camada {
+      transform: scale(1.12);
+      animation-name: hero-parallax;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90vh;
+    }
+    @keyframes hero-parallax {
+      to {
+        transform: scale(1.12) translateY(5.5%);
+      }
+    }
+  }
+}
+
+/* ---------- A9. Faixa de compromissos deslizando ---------- */
+.faixa-trilha {
+  animation: faixa-desliza 42s linear infinite;
+}
+.faixa:hover .faixa-trilha,
+.faixa:focus-within .faixa-trilha {
+  animation-play-state: paused;
+}
+@keyframes faixa-desliza {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Parada: as frentes de atuação passam a quebrar linha e ficam centralizadas, sem corte nas bordas. */
+  .faixa-trilha {
+    animation: none;
+    display: block;
+    width: auto;
+    white-space: normal;
+  }
+  .faixa-trilha > ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 0.25rem;
+  }
+  .faixa-trilha > ul[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* ---------- A10. Entrada escalonada dos filhos (o pai precisa ter data-revelar) ---------- */
+/* Usa animação (e não transição) para não deixar atraso nos efeitos de passar o mouse depois da entrada. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-revelar].revelado [data-escalonar] > *,
+  html.js [data-revelar][data-escalonar].revelado > * {
+    animation: entra-escalonada 0.6s ease backwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 120ms);
+  }
+  @keyframes entra-escalonada {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+  }
+}
+
+/* ---------- B1. Inclinação 3D leve (o script define a rotação) ---------- */
+[data-inclinar] {
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+[data-inclinar][data-inclinando] {
+  transition: transform 0.08s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-inclinar] {
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* ---------- B2. Botão magnético (o script define o deslocamento) ---------- */
+[data-magnetico] {
+  transition: transform 0.25s ease;
+}
+[data-magnetico][data-puxando] {
+  transition: transform 0.08s linear;
+}

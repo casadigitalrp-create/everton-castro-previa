@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Everton Castro, cirurgião-dentista">
+  <rect width="64" height="64" rx="14" fill="#fbf9f4"/>
+  <rect x="1.500" y="1.500" width="61" height="61" rx="12.500" fill="none" stroke="#b8893a" stroke-width="3"/>
+  <path d="M32 15c-4-4-12-3-14 3-1.500 4 .5 8 1.500 12 1 4 1.500 10 4 14 1.800 2.800 4 .5 4-3 0-2.500.5-5 4.500-5s4.500 2.500 4.500 5c0 3.500 2.200 5.800 4 3 2.500-4 3-10 4-14 1-4 3-8 1.500-12-2-6-10-7-14-3Z" fill="#fff" stroke="#b8893a" stroke-width="2.200" stroke-linejoin="round"/>
+</svg>
